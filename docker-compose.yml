@@ -1,0 +1,97 @@
+version: "3.8"
+
+services:
+  gateway:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    container_name: ip-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./gateway:/var/www/html
+    depends_on:
+      - auth
+      - ip
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - IP_SERVICE_URL=http://ip-service:8000
+
+  auth:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: ip-auth-service
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./auth:/var/www/html
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=auth-db
+      - DB_PORT=3306
+      - DB_DATABASE=auth_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+  ip:
+    build:
+      context: ./ip-service
+      dockerfile: Dockerfile
+    container_name: ip-management-service
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./ip:/var/www/html
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=ip-db
+      - DB_PORT=3306
+      - DB_DATABASE=ip_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ip-frontend
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - ip-network
+    depends_on:
+      - gateway
+
+  auth-db:
+    image: mysql:8.0
+    container_name: ip-auth-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+    networks:
+      - ip-network
+    volumes:
+      - auth-db-data:/var/lib/mysql
+
+  ip-db:
+    image: mysql:8.0
+    container_name: ip-ip-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ip_db
+    networks:
+      - ip-network
+    volumes:
+      - ip-db-data:/var/lib/mysql
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  auth-db-data:
+  ip-db-data:
