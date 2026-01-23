@@ -24,9 +24,22 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!$token = auth('api')->attempt($credentials)) {
+            $this->logs([
+                'user_id' => auth('api')->id(),
+                'event' => 'login',
+                'ip_address' => request()->ip(),
+                'details' => ['status' => 'failed login']
+            ]);
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
-        
+
+        $this->logs([
+            'user_id' => auth('api')->id(),
+            'event' => 'login',
+            'ip_address' => request()->ip(),
+            'details' => ['status' => 'success login']
+        ]);
+
         return $this->respondWithToken($token);
     }
 
@@ -43,6 +56,16 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => auth('api')->user()
+        ]);
+    }
+
+    public function logs($arr)
+    {
+        AuditLog::create([
+            'user_id' => $arr['user_id'],
+            'event' => $arr['event'],
+            'ip_address' => $arr['ip_address'],
+            'details' => $arr['details'],
         ]);
     }
 }
