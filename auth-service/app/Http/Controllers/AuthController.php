@@ -46,7 +46,18 @@ class AuthController extends Controller
     public function logout()
     {
         auth('api')->logout();
+        $this->logs([
+            'user_id' => auth('api')->id(),
+            'event' => 'logout',
+            'ip_address' => request()->ip(),
+            'details' => ['status' => 'Successfully logged out']
+        ]);
         return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    public function refreshtoken()
+    {
+        return $this->respondWithToken(auth('api')->refresh());
     }
 
     protected function respondWithToken($token)
