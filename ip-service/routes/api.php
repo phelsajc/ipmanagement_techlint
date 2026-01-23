@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\IpAddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['jwt.verify'])->group(function () {
+    Route::get('ips', [IpAddressController::class, 'index']);
+    Route::post('ips', [IpAddressController::class, 'store']);
+    Route::put('ips/{id}', [IpAddressController::class, 'update']);
+    Route::delete('ips/{id}', [IpAddressController::class, 'destroy']);
 });
