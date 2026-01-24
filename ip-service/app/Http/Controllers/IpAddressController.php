@@ -33,7 +33,8 @@ class IpAddressController extends Controller
             'created_by' => $userId
         ]);
 
-        //$request->get('role');
+        $this->auditLog($ip->id, $userId, 'store ip', null, $ip->toArray());
+
         return response()->json($ip, 201);
     }
 
@@ -41,7 +42,7 @@ class IpAddressController extends Controller
     {
         $ip = IpAddress::findOrFail($id);
         $userId = $request->get('user_id');
-        $roleId = $request->get('role_id');
+        $roleId = $request->get('role');
 
         if ($roleId != self::ROLE_ADMIN && $ip->created_by != $userId) {
             return response()->json(['error' => 'No privilege to update'], 403);
@@ -52,8 +53,11 @@ class IpAddressController extends Controller
             'comment' => 'nullable|string'
         ]);
 
+        $oldValues = $ip->toArray();
+
         $ip->update($request->only(['title', 'comment']));
 
+        $this->auditLog($ip->id, $userId, 'store ip', $oldValues, $ip->toArray());
 
         return response()->json($ip);
     }
@@ -61,11 +65,18 @@ class IpAddressController extends Controller
     public function destroy(Request $request, $id)
     {
         $ip = IpAddress::findOrFail($id);
-        $roleId = $request->get('role_id');
+        $userId = $request->get('user_id');
+        $roleId = $request->get('role');
 
         if ($roleId != self::ROLE_ADMIN) {
-            return response()->json(['error' => 'No privilege to delete'], 403);
+            return response()->json(['error' => 'No privilege to delete ' . $roleId], 403);
         }
+
+        $ip->update($request->only(['title', 'comment']));
+
+        $oldValues = $ip->toArray();
+
+        $this->auditLog($ip->id, $userId, 'delete ip', $oldValues, null);
 
         $ip->delete();
 
@@ -80,5 +91,16 @@ class IpAddressController extends Controller
         }
 
         return response()->json(IPAuditLog::latest()->get());
+    }
+
+    private function auditLog($ipId, $userId, $event, $old, $new)
+    {
+        IPAuditLog::create([
+            'ip_record_id' => $ipId,
+            'user_id' => $userId,
+            'event' => $event,
+            'old_values' => $old,
+            'new_values' => $new
+        ]);
     }
 }
