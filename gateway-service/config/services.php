@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'auth' => [
+        'url' => env('AUTH_SERVICE_URL', 'http://auth_service:8000'),
+    ],
+    'ip' => [
+        'url' => env('IP_SERVICE_URL', 'http://ip_service:8000')
+    ],
+
 ];

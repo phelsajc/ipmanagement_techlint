@@ -5,27 +5,27 @@ services:
     build:
       context: ./gateway-service
       dockerfile: Dockerfile
-    container_name: ip-gateway
+    container_name: ip-address-gateway
     ports:
       - "8000:8000"
     volumes:
-      - ./gateway:/var/www/html
+      - ./gateway-service:/var/www/html
     depends_on:
-      - auth
-      - ip
+      - auth_service
+      - ip_service
     environment:
-      - AUTH_SERVICE_URL=http://auth-service:8000
-      - IP_SERVICE_URL=http://ip-service:8000
+      - AUTH_SERVICE_URL=http://auth_service:8000
+      - IP_SERVICE_URL=http://ip_service:8000
 
-  auth:
+  auth_service:
     build:
       context: ./auth-service
       dockerfile: Dockerfile
-    container_name: ip-auth-service
+    container_name: ip-address-auth-service
     ports:
       - "8001:8000"
     volumes:
-      - ./auth:/var/www/html
+      - ./auth-service:/var/www/html
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=auth-db
@@ -34,15 +34,15 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=root
 
-  ip:
+  ip_service:
     build:
       context: ./ip-service
       dockerfile: Dockerfile
-    container_name: ip-management-service
+    container_name: ip-address-management-service
     ports:
       - "8002:8000"
     volumes:
-      - ./ip:/var/www/html
+      - ./ip-service:/var/www/html
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=ip-db
@@ -55,7 +55,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: ip-frontend
+    container_name: ip-address-frontend
     ports:
       - "3000:5173"
     volumes:
@@ -68,7 +68,7 @@ services:
 
   auth-db:
     image: mysql:8.0
-    container_name: ip-auth-db
+    container_name: ip-address-auth-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: auth_db
@@ -79,7 +79,7 @@ services:
 
   ip-db:
     image: mysql:8.0
-    container_name: ip-ip-db
+    container_name: ip-address-db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ip_db
@@ -89,7 +89,7 @@ services:
       - ip-db-data:/var/lib/mysql
 
 networks:
-  default:
+  ip-network:
     driver: bridge
 
 volumes:
