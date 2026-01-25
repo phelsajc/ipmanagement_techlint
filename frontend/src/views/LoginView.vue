@@ -41,10 +41,20 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useAuthStore } from "../stores/auth";
+
+const auth = useAuthStore();
 
 const email = ref("admin@example.com");
 const password = ref("password");
 const handleLogin = async () => {
+  
+  try {
+    await auth.login({ email: email.value, password: password.value });
+  } catch (e: any) {
     
+  } finally {
+    
+  }
 };
 </script>
