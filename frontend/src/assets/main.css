@@ -81,7 +81,24 @@ label {
 .btn-primary {
   background-color: #4cd137;
   color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
 }
+
+.btn-logout {
+  background-color: #e84118;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+}
+
+.btn-cancel {
+  background-color: #eee6e5;
+  color: rgb(14, 9, 9);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+}
+
 
 .btn-primary:hover {
   background-color: #44bd32;

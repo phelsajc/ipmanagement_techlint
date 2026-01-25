@@ -44,13 +44,6 @@ const logout = () => {
   text-decoration: underline;
 }
 
-.btn-logout {
-  background-color: #e84118;
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
-}
-
 .btn-logout:hover {
   background-color: #c23616;
 }

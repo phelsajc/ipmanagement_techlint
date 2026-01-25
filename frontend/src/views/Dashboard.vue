@@ -12,7 +12,7 @@
         <thead>
           <tr>
             <th>IP Address</th>
-            <th>Label</th>
+            <th>Title</th>
             <th>Comment</th>
             <th>Actions</th>
           </tr>
@@ -22,6 +22,22 @@
             <td>{{ ip.ip_address }}</td>
             <td>{{ ip.title }}</td>
             <td>{{ ip.comment || "-" }}</td>
+            <td>
+              <button
+                v-if="auth.isAdmin || auth.user.id === ip.created_by"
+                @click="openEditModal(ip)"
+                class="btn btn-primary"
+              >
+                Edit
+              </button>
+
+              <button
+                v-if="auth.isAdmin"
+                class="btn btn-primary btn-logout"
+              >
+                Delete
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -34,22 +50,22 @@
         <form @submit.prevent="saveIP">
           <div class="form-group">
             <label>IP Address</label>
-            <input type="text" class="input-field" />
+            <input v-model="data.ip_address" type="text" class="input-field" />
           </div>
 
           <div class="form-group">
-            <label>Label</label>
-            <input type="text" class="input-field" />
+            <label>Title</label>
+            <input v-model="data.title" type="text" class="input-field" />
           </div>
 
           <div class="form-group">
             <label>Comment</label>
-            <input type="text" class="input-field" />
+            <input v-model="data.comment" type="text" class="input-field" />
           </div>
 
           <div class="mt-4">
             <button type="submit" class="btn btn-primary">Add</button>
-            <button type="button" class="btn mt-1" @click="closeModal">Cancel</button>
+            <button type="button" class="btn btn-cancel" @click="closeModal">Cancel</button>
           </div>
         </form>
       </div>
@@ -65,15 +81,15 @@ import axios from "axios";
 interface IPAddress {
   id: number;
   ip_address: string;
-  address: string;
   title: string;
-  comment?: string;
+  comment: string;
+  created_by: number;
 }
 const auth = useAuthStore();
 
 const ips = ref<IPAddress[]>([]);
 const showModal = ref(false);
-const editingIP = ref<IPAddress | null>(null);
+const editingIP = ref(false);
 const data = ref({ id: 0, ip_address: "", title: "", comment: "" });
 
 const fetchIps = async () => {
@@ -86,12 +102,42 @@ const fetchIps = async () => {
 };
 
 const openAddIP = () => {
-    
+  editingIP.value = false;
+  data.value = {
+    id: 0,
+    ip_address: '',
+    title: '',
+    comment: ''
+  };
+  showModal.value = true;
 };
 
-const saveIP = () => {
-    
-  closeModal();
+const openEditModal = (ip: IPAddress) => {
+  editingIP.value = true;
+  data.value = { ...ip };
+  showModal.value = true;
+};
+
+const saveIP = async () => {
+  try {
+    if (editingIP.value) {
+      await axios.patch(`http://localhost:8000/api/ips/${data.value.id}`, {
+        label: data.value.title,
+        comment: data.value.comment,
+        user_id: auth.user.id,
+        role_id: auth.user.role,
+      });
+    } else {
+      await axios.post("http://localhost:8000/api/ips", {
+        ...data.value,
+        user_id: auth.user.id,
+      });
+    }
+    closeModal();
+    fetchIps();
+  } catch (e: any) {
+    alert(e.response?.data?.error || "Operation failed");
+  }
 };
 
 const closeModal = () => {
