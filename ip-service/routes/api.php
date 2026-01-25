@@ -20,4 +20,6 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::post('ips', [IpAddressController::class, 'store']);
     Route::put('ips/{id}', [IpAddressController::class, 'update']);
     Route::delete('ips/{id}', [IpAddressController::class, 'destroy']);
+
+    Route::get('audit-logs', [IpAddressController::class, 'getAuditLogs']);
 });
