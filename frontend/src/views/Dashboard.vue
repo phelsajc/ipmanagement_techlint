@@ -17,6 +17,13 @@
             <th>Actions</th>
           </tr>
         </thead>
+        <tbody>
+          <tr v-for="ip in ips" :key="ip.id">
+            <td>{{ ip.ip_address }}</td>
+            <td>{{ ip.title }}</td>
+            <td>{{ ip.comment || "-" }}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
 
@@ -51,18 +58,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from "vue";
+import { useAuthStore } from "../stores/auth";
+import axios from "axios";
 
 interface IPAddress {
   id: number;
+  ip_address: string;
   address: string;
-  label: string;
+  title: string;
   comment?: string;
 }
+const auth = useAuthStore();
 
+const ips = ref<IPAddress[]>([]);
 const showModal = ref(false);
 const editingIP = ref<IPAddress | null>(null);
-const form = ref;
+const data = ref({ id: 0, ip_address: "", title: "", comment: "" });
+
+const fetchIps = async () => {
+  try {
+    const res = await axios.get("http://localhost:8000/api/ips");
+    ips.value = res.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const openAddIP = () => {
     
@@ -76,6 +97,8 @@ const saveIP = () => {
 const closeModal = () => {
   showModal.value = false;
 };
+
+onMounted(fetchIps);
 </script>
 
 <style scoped>
