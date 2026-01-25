@@ -25,7 +25,7 @@
             <td>
               <button
                 v-if="auth.isAdmin || auth.user.id === ip.created_by"
-                @click="openEditModal(ip)"
+                @click="editIp(ip)"
                 class="btn btn-primary"
               >
                 Edit
@@ -33,7 +33,8 @@
 
               <button
                 v-if="auth.isAdmin"
-                class="btn btn-primary btn-logout"
+                class="btn btn-logout"
+                @click="deleteIp(ip.id)"
               >
                 Delete
               </button>
@@ -112,7 +113,7 @@ const openAddIP = () => {
   showModal.value = true;
 };
 
-const openEditModal = (ip: IPAddress) => {
+const editIp = (ip: IPAddress) => {
   editingIP.value = true;
   data.value = { ...ip };
   showModal.value = true;
@@ -121,7 +122,7 @@ const openEditModal = (ip: IPAddress) => {
 const saveIP = async () => {
   try {
     if (editingIP.value) {
-      await axios.patch(`http://localhost:8000/api/ips/${data.value.id}`, {
+      await axios.put(`http://localhost:8000/api/ips/${data.value.id}`, {
         label: data.value.title,
         comment: data.value.comment,
         user_id: auth.user.id,
@@ -137,6 +138,21 @@ const saveIP = async () => {
     fetchIps();
   } catch (e: any) {
     alert(e.response?.data?.error || "Operation failed");
+  }
+};
+
+const deleteIp = async (id: number) => {
+  if (!confirm("Delete selected IP Address?")) return;
+  try {
+    await axios.delete(`http://localhost:8000/api/ips/${id}`, {
+      data: {
+        user_id: auth.user.id,
+        role_id: auth.user.role,
+      },
+    });
+    fetchIps();
+  } catch (e: any) {
+    alert(e.response?.data?.error || "Delete failed");
   }
 };
 
