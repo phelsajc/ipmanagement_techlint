@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrapper">
     <div class="card login-card">
-      <h2 class="title">Welcome Back</h2>
+      <h2 class="title">IP Management</h2>
       <p class="subtitle">Sign in to manage IP addresses</p>
 
       <form @submit.prevent="handleLogin">
@@ -26,14 +26,12 @@
             required
           />
         </div>
-
         <button
           type="submit"
           class="btn btn-primary full-width"
         >
           Sign In
         </button>
-
       </form>
     </div>
   </div>
@@ -51,7 +49,7 @@ const email = ref("admin@example.com");
 const password = ref("password");
 
 const handleLogin = async () => {
-  ui.showLoading()
+  ui.showLoading('Signing in...');
   try {
     await auth.login({ email: email.value, password: password.value });
   } catch (e: any) {

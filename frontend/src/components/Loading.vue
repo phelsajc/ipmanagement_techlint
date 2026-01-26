@@ -1,17 +1,19 @@
-<template>    
-  <div class="loading-overlay" v-show="visible">
-    <div class="loading-card">
-      <div class="spinner"></div>
-      <p class="loading-text">{{ text }}</p>
-    </div>
-  </div>
+  <template>
+    <transition name="fade">
+      <div v-if="visible" class="loading-overlay">
+        <div class="loading-card">
+          <div class="spinner"></div>
+          <p class="loading-text">{{ text }}</p>
+        </div>
+      </div>
+    </transition>
   </template>
-  
+
   <script setup lang="ts">
-  defineProps<{
-    visible: boolean;
-    text?: string;
-  }>();
+  defineProps({
+    visible: { type: Boolean, required: true },
+    text: { type: String, default: 'Loading...' },
+  });
   </script>
   
   <style scoped>

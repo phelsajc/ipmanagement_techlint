@@ -33,11 +33,14 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useAuthStore } from "../stores/auth";
+import { useUiStore } from '../stores/ui'
 
 const logs = ref<any[]>([]);
 const auth = useAuthStore();
+const ui = useUiStore()
 
 const fetchLogs = async () => {
+  ui.showLoading('Fetching logs...');
   try {
     const res = await axios.get("http://localhost:8000/api/audit-logs", {
       params: { user_id: auth.user.id, role: auth.user.role },
@@ -45,6 +48,8 @@ const fetchLogs = async () => {
     logs.value = res.data;
   } catch (e) {
     console.error(e);
+  } finally {
+    ui.hideLoading();
   }
 };
 

@@ -1,14 +1,14 @@
 <template>
   <div class="dashboard-wrapper">
-    <div class="dashboard-header">
-      <h1 class="title">IP Address Management</h1>
-      <button class="btn btn-primary" @click="openAddIP">
-        Add New IP
-      </button>
-    </div>
-
     <div class="card mt-4">
-      <table class="ip-table">
+      <div class="dashboard-header">
+        <h1 class="title">IP Address Management</h1>
+        <button class="btn btn-primary" @click="openAddIP">
+          Add New IP
+        </button>
+      </div>
+
+      <table class="ip-table mt-4">
         <thead>
           <tr>
             <th>IP Address</th>
@@ -21,23 +21,24 @@
           <tr v-for="ip in ips" :key="ip.id">
             <td>{{ ip.ip_address }}</td>
             <td>{{ ip.title }}</td>
-            <td>{{ ip.comment || "-" }}</td>
+            <td>{{ ip.comment}}</td>
             <td>
-              <button
-                v-if="auth.isAdmin || auth.user.id === ip.created_by"
-                @click="editIp(ip)"
-                class="btn btn-primary"
-              >
-                Edit
-              </button>
-
-              <button
-                v-if="auth.isAdmin"
-                class="btn btn-logout"
-                @click="deleteIp(ip.id)"
-              >
-                Delete
-              </button>
+              <div class="button-group">
+                <button
+                  v-if="auth.isAdmin || auth.user.id === ip.created_by"
+                  @click="editIp(ip)"
+                  class="btn btn-primary"
+                >
+                  Edit
+                </button>
+                <button
+                  v-if="auth.isAdmin"
+                  class="btn btn-logout"
+                  @click="deleteIp(ip.id)"
+                >
+                  Delete
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -46,10 +47,10 @@
 
     <div v-if="showModal" class="modal-overlay">
       <div class="modal-card card">
-        <h2 class="title">IP Management</h2>
+        <h2 class="title">{{editingIP ? 'Edit IP Address' : 'Add IP Address'}}</h2>
 
         <form @submit.prevent="saveIP">
-          <div class="form-group">
+          <div class="form-group" v-if="!editingIP">
             <label>IP Address</label>
             <input v-model="data.ip_address" type="text" class="input-field" />
           </div>
@@ -64,8 +65,8 @@
             <input v-model="data.comment" type="text" class="input-field" />
           </div>
 
-          <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Add</button>
+          <div class="button-group">
+            <button type="submit" class="btn btn-primary">Save</button>
             <button type="button" class="btn btn-cancel" @click="closeModal">Cancel</button>
           </div>
         </form>
@@ -96,7 +97,7 @@ const data = ref({ id: 0, ip_address: "", title: "", comment: "" });
 const ui = useUiStore()
 
 const fetchIps = async () => {
-  ui.showLoading()
+  ui.showLoading('Fetching records...');
   try {
     const res = await axios.get("http://localhost:8000/api/ips");
     ips.value = res.data;
@@ -125,10 +126,11 @@ const editIp = (ip: IPAddress) => {
 };
 
 const saveIP = async () => {
+  ui.showLoading('Saving data...');
   try {
     if (editingIP.value) {
       await axios.put(`http://localhost:8000/api/ips/${data.value.id}`, {
-        label: data.value.title,
+        title: data.value.title,
         comment: data.value.comment,
         user_id: auth.user.id,
         role_id: auth.user.role,
@@ -140,14 +142,17 @@ const saveIP = async () => {
       });
     }
     closeModal();
-    fetchIps();
   } catch (e: any) {
-    alert(e.response?.data?.error || "Operation failed");
+    console.log(e);
+    alert(e.response?.data?.message || "Operation failed");
+  } finally {
+    fetchIps();
   }
 };
 
 const deleteIp = async (id: number) => {
   if (!confirm("Delete selected IP Address?")) return;
+  ui.showLoading('deleting data...');
   try {
     await axios.delete(`http://localhost:8000/api/ips/${id}`, {
       data: {
@@ -155,9 +160,10 @@ const deleteIp = async (id: number) => {
         role_id: auth.user.role,
       },
     });
-    fetchIps();
   } catch (e: any) {
-    alert(e.response?.data?.error || "Delete failed");
+    alert(e.response?.data?.message || "Delete failed");
+  } finally {
+    fetchIps();
   }
 };
 
@@ -210,5 +216,38 @@ onMounted(fetchIps);
 
 .modal-card {
   width: 400px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;            
+  padding: 1rem;
+}
+
+.dashboard-header .title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.ip-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ip-table th,
+.ip-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dcdde1;
+  text-align: left;
+}
+
+.ip-table th {
+  background-color: #f0f0f0;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem; /* space between buttons */
 }
 </style>
