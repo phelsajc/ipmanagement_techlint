@@ -25,40 +25,40 @@
 
     You will need to set up the environment files for each service.
 
-3.  **Build and Start Containers**
-
-    Run the following command in the root directory to build and start the entire application:
-
-    ```bash
-    docker-compose up -d --build
-    ```
-
-4.  **Install Dependencies and Run Migrations**
+3.  **Install Dependencies**
 
     **Auth Service:**
 
     ```bash
-    docker exec -it ip-address-auth-service cp .env.example .env
-    docker exec -it ip-address-auth-service composer install
-    docker exec -it ip-address-auth-service php artisan migrate --seed
-    docker exec -it ip-address-auth-service php artisan key:generate
+    docker-compose run --rm auth_service cp .env.example .env
+    docker-compose run --rm auth_service composer install
+    docker-compose run --rm auth_service php artisan key:generate
+    docker-compose run --rm auth_service php artisan migrate --seed
     ```
 
     **IP Service:**
 
     ```bash
-    docker exec -it ip-address-management-service cp .env.example .env
-    docker exec -it ip-address-management-service composer install
-    docker exec -it ip-address-management-service php artisan migrate --seed
-    docker exec -it ip-address-management-service php artisan key:generate
+    docker-compose run --rm ip_service cp .env.example .env
+    docker-compose run --rm ip_service composer install
+    docker-compose run --rm ip_service php artisan key:generate
+    docker-compose run --rm ip_service php artisan migrate --seed
     ```
 
     **Gateway Service:**
 
     ```bash
-    docker exec -it ip-address-gateway cp .env.example .env
-    docker exec -it ip-address-gateway composer install
-    docker exec -it ip-address-gateway php artisan key:generate
+    docker-compose run --rm gateway cp .env.example .env
+    docker-compose run --rm gateway composer install
+    docker-compose run --rm gateway php artisan key:generate
+    ```
+
+4.  **Start the Application**
+
+    Now that dependencies are installed, start the services:
+
+    ```bash
+    docker-compose up -d --build
     ```
 
 ## Default Users
