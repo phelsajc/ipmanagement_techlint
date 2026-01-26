@@ -26,13 +26,6 @@ services:
       - "8001:8000"
     volumes:
       - ./auth-service:/var/www/html
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=auth-db
-      - DB_PORT=3306
-      - DB_DATABASE=auth_db
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
 
   ip_service:
     build:
@@ -43,13 +36,6 @@ services:
       - "8002:8000"
     volumes:
       - ./ip-service:/var/www/html
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=ip-db
-      - DB_PORT=3306
-      - DB_DATABASE=ip_db
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
 
   frontend:
     build:
