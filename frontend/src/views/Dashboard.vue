@@ -27,7 +27,7 @@
                 <button
                   v-if="auth.isAdmin || auth.user.id === ip.created_by"
                   @click="editIp(ip)"
-                  class="btn btn-primary"
+                  class="btn btn-warning"
                 >
                   Edit
                 </button>
@@ -143,7 +143,6 @@ const saveIP = async () => {
     }
     closeModal();
   } catch (e: any) {
-    console.log(e);
     alert(e.response?.data?.message || "Operation failed");
   } finally {
     fetchIps();

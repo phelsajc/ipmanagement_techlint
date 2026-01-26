@@ -99,6 +99,12 @@ label {
   border-radius: 4px;
 }
 
+.btn-warning {
+  background-color: #ecec11;
+  color: rgb(14, 9, 9);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+}
 
 .btn-primary:hover {
   background-color: #44bd32;

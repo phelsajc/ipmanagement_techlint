@@ -45,15 +45,16 @@ import { useUiStore } from '../stores/ui'
 const auth = useAuthStore();
 const ui = useUiStore()
 
-const email = ref("admin@example.com");
-const password = ref("password");
+const email = ref("");
+const password = ref("");
 
 const handleLogin = async () => {
   ui.showLoading('Signing in...');
   try {
     await auth.login({ email: email.value, password: password.value });
   } catch (e: any) {
-    
+    console.log(e);
+    alert(e.response?.data?.error || "Operation failed");
   } finally {
     ui.hideLoading()
   }
