@@ -57,7 +57,7 @@ class IpAddressController extends Controller
 
         $ip->update($request->only(['title', 'comment']));
 
-        $this->auditLog($userId, 'store ip', $oldValues, $ip->toArray());
+        $this->auditLog($userId, 'update ip', $oldValues, $ip->toArray());
 
         return response()->json($ip);
     }
