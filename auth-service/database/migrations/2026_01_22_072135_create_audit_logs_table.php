@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -18,7 +17,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable(); // Who performed the action
             $table->string('event'); // login, logout, etc.
             $table->string('ip_address')->nullable();
-            $table->text('user_agent')->nullable();
             $table->json('details')->nullable();
             $table->timestamps();
         });

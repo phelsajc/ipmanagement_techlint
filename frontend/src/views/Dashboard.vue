@@ -78,6 +78,7 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "../stores/auth";
 import axios from "axios";
+import { useUiStore } from '../stores/ui'
 
 interface IPAddress {
   id: number;
@@ -92,13 +93,17 @@ const ips = ref<IPAddress[]>([]);
 const showModal = ref(false);
 const editingIP = ref(false);
 const data = ref({ id: 0, ip_address: "", title: "", comment: "" });
+const ui = useUiStore()
 
 const fetchIps = async () => {
+  ui.showLoading()
   try {
     const res = await axios.get("http://localhost:8000/api/ips");
     ips.value = res.data;
   } catch (e) {
     console.error(e);
+  } finally {
+    ui.hideLoading()
   }
 };
 

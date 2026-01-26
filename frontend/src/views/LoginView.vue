@@ -42,19 +42,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAuthStore } from "../stores/auth";
+import { useUiStore } from '../stores/ui'
 
 const auth = useAuthStore();
+const ui = useUiStore()
 
 const email = ref("admin@example.com");
 const password = ref("password");
+
 const handleLogin = async () => {
-  
+  ui.showLoading()
   try {
     await auth.login({ email: email.value, password: password.value });
   } catch (e: any) {
     
   } finally {
-    
+    ui.hideLoading()
   }
 };
 </script>
