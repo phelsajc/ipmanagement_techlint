@@ -32,6 +32,7 @@
     ```bash
     docker-compose run --rm auth_service cp .env.example .env
     docker-compose run --rm auth_service composer install
+    docker-compose run --rm auth_service php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
     docker-compose run --rm auth_service php artisan key:generate
     docker-compose run --rm auth_service php artisan migrate --seed
     ```
@@ -41,6 +42,7 @@
     ```bash
     docker-compose run --rm ip_service cp .env.example .env
     docker-compose run --rm ip_service composer install
+    docker-compose run --rm ip_service php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
     docker-compose run --rm ip_service php artisan key:generate
     docker-compose run --rm ip_service php artisan migrate --seed
     ```
