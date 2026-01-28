@@ -19,49 +19,44 @@
     ```bash
     git clone <repository-url>
     cd ipmanagement_techlint
+    docker-compose up -d --build
     ```
 
-2.  **Environment Setup**
-
-    You will need to set up the environment files for each service.
-
-3.  **Install Dependencies**
+2.  **Install Dependencies**
 
     **Auth Service:**
+    cd auth-service
 
     ```bash
-    docker-compose run --rm auth_service cp .env.example .env
-    docker-compose run --rm auth_service composer install
-    docker-compose run --rm auth_service php artisan config:clear
-    docker-compose run --rm auth_service php artisan key:generate
-    docker-compose run --rm auth_service php artisan migrate --seed
+    docker exec -it ip-address-auth-service sh
+    composer install
+    php artisan key:generate
+    php artisan migrate --seed
+    php artisan config:clear
+    php artisan config:cache
     ```
 
     **IP Service:**
+    cd ip-service
 
     ```bash
-    docker-compose run --rm ip_service cp .env.example .env
-    docker-compose run --rm ip_service composer install
-    docker-compose run --rm ip_service php artisan config:clear
-    docker-compose run --rm ip_service php artisan key:generate
-    docker-compose run --rm ip_service php artisan migrate --seed
+    docker exec -it ip-address-management-service sh
+    composer install
+    php artisan key:generate
+    php artisan migrate --seed
+    php artisan config:clear
+    php artisan config:cache
     ```
 
     **Gateway Service:**
+    cd gateway-service
 
     ```bash
-    docker-compose run --rm gateway cp .env.example .env
-    docker-compose run --rm gateway composer install
-    docker-compose run --rm gateway php artisan config:clear
-    docker-compose run --rm gateway php artisan key:generate
-    ```
-
-4.  **Start the Application**
-
-    Now that dependencies are installed, start the services:
-
-    ```bash
-    docker-compose up -d --build
+    docker exec -it ip-address-gateway sh
+    composer install
+    php artisan key:generate
+    php artisan config:clear
+    php artisan config:cache
     ```
 
 ## Default Users
