@@ -28,8 +28,6 @@ services:
       - "8001:8000"
     volumes:
       - ./auth-service:/var/www/html
-    depends_on:
-      - auth-db
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=auth-db
@@ -38,6 +36,7 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=root
       - JWT_SECRET=techLintPAss0rd!
+      - JWT_ALGO=HS256
     networks:
       - ip-network
 
@@ -50,8 +49,6 @@ services:
       - "8002:8000"
     volumes:
       - ./ip-service:/var/www/html
-    depends_on:
-      - ip-db
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=ip-db
@@ -60,6 +57,7 @@ services:
       - DB_USERNAME=root
       - DB_PASSWORD=root
       - JWT_SECRET=techLintPAss0rd!
+      - JWT_ALGO=HS256
     networks:
       - ip-network
 
