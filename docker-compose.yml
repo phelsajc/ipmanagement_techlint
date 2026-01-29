@@ -59,7 +59,7 @@ services:
       - DB_DATABASE=ip_db
       - DB_USERNAME=root
       - DB_PASSWORD=root
-      - JWT_SECRET=super_secret_jwt_key_123!
+      - JWT_SECRET=techLintPAss0rd!
     networks:
       - ip-network
 
