@@ -22,4 +22,5 @@ Route::group([
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refreshtoken', [AuthController::class, 'refreshtoken']);
+    Route::get('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'index']);
 });

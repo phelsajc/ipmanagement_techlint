@@ -14,13 +14,17 @@
         <tbody>
           <tr v-for="log in logs" :key="log.id">
             <td>{{ new Date(log.created_at).toLocaleString() }}</td>
-            <td>{{ log.user_id }}</td>
+            <td>
+              <span v-if="log.user">{{ log.user.name || log.user.email }}</span>
+              <span v-else>{{ log.user_id }}</span>
+            </td>
             <td>
               <span class="tag">{{ log.event }}</span>
             </td>
             <td class="code-cell">
               <div v-if="log.old_values">Old: {{ log.old_values }}</div>
               <div v-if="log.new_values">New: {{ log.new_values }}</div>
+              <div v-if="log.details">Details: {{ log.details }}</div>
             </td>
           </tr>
         </tbody>
@@ -42,10 +46,20 @@ const ui = useUiStore()
 const fetchLogs = async () => {
   ui.showLoading('Fetching logs...');
   try {
-    const res = await axios.get("http://localhost:8000/api/audit-logs", {
-      params: { user_id: auth.user.id, role: auth.user.role },
-    });
-    logs.value = res.data;
+    const [resIp, resAuth] = await Promise.all([
+      axios.get("http://localhost:8000/api/audit-logs", {
+        params: { user_id: auth.user.id, role: auth.user.role },
+      }),
+      axios.get("http://localhost:8000/api/auth/audit-logs", {
+        params: { user_id: auth.user.id, role: auth.user.role },
+      })
+    ]);
+
+    const ipLogs = resIp.data.map((log: any) => ({ ...log, source: 'ip' }));
+    const authLogs = resAuth.data.map((log: any) => ({ ...log, source: 'auth' }));
+    const combinedLogs = [...ipLogs, ...authLogs];
+    
+    logs.value = combinedLogs;
   } catch (e) {
     console.error(e);
   } finally {
