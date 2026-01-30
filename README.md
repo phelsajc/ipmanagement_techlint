@@ -21,44 +21,17 @@
     cd ipmanagement_techlint
     ```
 
-2.  **Install Dependencies**
-
-    **Auth Service:**
-
-    ```bash
-    docker-compose run --rm auth_service cp .env.example .env
-    docker-compose run --rm auth_service composer install
-    docker-compose run --rm auth_service php artisan key:generate
-    docker-compose run --rm auth_service php artisan migrate --seed
-    docker-compose run --rm auth_service php artisan config:clear
-    docker-compose run --rm auth_service php artisan config:cache
-    ```
-
-    **IP Service:**
-
-    ```bash
-    docker-compose run --rm ip_service cp .env.example .env
-    docker-compose run --rm ip_service composer install
-    docker-compose run --rm ip_service php artisan key:generate
-    docker-compose run --rm ip_service php artisan migrate --seed
-    docker-compose run --rm ip_service php artisan config:clear
-    docker-compose run --rm ip_service php artisan config:cache
-    ```
-
-    **Gateway Service:**
-
-    ```bash
-    docker-compose run --rm gateway cp .env.example .env
-    docker-compose run --rm gateway composer install
-    docker-compose run --rm gateway php artisan key:generate
-    ```
-
-3.  **Start the Application**
-
-    Now that dependencies are installed, start the services:
+2.  **Build and Start the Application**
 
     ```bash
     docker-compose up -d --build
+    ```
+
+3.  **Seed Initial Data**
+
+    ```bash
+    docker compose exec auth_service php artisan db:seed --force
+    docker compose exec ip_service php artisan db:seed --force
     ```
 
 ## Default Users
