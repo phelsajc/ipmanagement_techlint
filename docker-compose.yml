@@ -10,6 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - ./gateway-service:/var/www/html
+      - /var/www/html/vendor
     depends_on:
       - auth_service
       - ip_service
@@ -28,6 +29,7 @@ services:
       - "8001:8000"
     volumes:
       - ./auth-service:/var/www/html
+      - /var/www/html/vendor
     depends_on:
       - auth-db
     environment:
@@ -50,6 +52,7 @@ services:
       - "8002:8000"
     volumes:
       - ./ip-service:/var/www/html
+      - /var/www/html/vendor
     depends_on:
       - ip-db
     environment:
